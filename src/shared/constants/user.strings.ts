@@ -1,4 +1,5 @@
 export const DEFAULT_AUTH_ERROR_MESSAGE = 'Неверная почта или пароль';
+export const DEFAULT_ERROR = 'Что-то пошло не так';
 
 export const USERNAME = {
   NOT_PRESENT: 'Имя пользователя обязательно для заполнения',

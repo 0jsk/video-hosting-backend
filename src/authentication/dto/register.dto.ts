@@ -1,5 +1,5 @@
 import { IsEmail, IsNotEmpty, Length, Matches } from 'class-validator';
-import { MAIL, PASSWORD, USERNAME } from 'src/authentication/strings.constants';
+import { MAIL, PASSWORD, USERNAME } from 'src/shared/constants/user.strings';
 import { passwordRegex, validateLength } from 'src/users/dto/validators';
 import { Match } from 'src/decorators/validators';
 

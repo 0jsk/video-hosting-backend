@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from 'src/authentication/dto/register.dto';
-import { DEFAULT_AUTH_ERROR_MESSAGE, MAIL } from 'src/authentication/strings.constants';
+import { DEFAULT_AUTH_ERROR_MESSAGE, MAIL } from 'src/shared/constants/user.strings';
 import { PostgresErrorCodesEnum } from 'src/database/postgresErrorCodes.enum';
 import * as bcrypt from 'bcrypt';
 
