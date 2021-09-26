@@ -20,8 +20,14 @@ export class UsersService {
     return await this.usersRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.usersRepository.findOne({ id });
+  async getById(id: number) {
+    const user = await this.usersRepository.findOne({ id });
+
+    if (!user) {
+      throw new HttpException(DEFAULT_ERROR, HttpStatus.NOT_FOUND);
+    }
+
+    return user;
   }
 
   async update(id: number, userData: UpdateUserDto) {
