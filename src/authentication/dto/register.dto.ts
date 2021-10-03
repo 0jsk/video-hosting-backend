@@ -14,6 +14,7 @@ export class RegisterDto {
   @IsEmail(undefined, { message: MAIL.INVALID })
   email: string;
 
+  @IsNotEmpty({ message: PASSWORD.NOT_PRESENT })
   @Matches(passwordRegex, { message: PASSWORD.TOO_WEAK })
   @Length(4, 20, {
     message: validateLength(PASSWORD.TOO_SHORT, PASSWORD.TOO_LONG),
