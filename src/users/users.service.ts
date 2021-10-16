@@ -1,22 +1,21 @@
-import { HttpException, HttpStatus, Injectable, Post } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { DEFAULT_ERROR, MAIL } from 'src/shared/constants/user.strings';
 import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UsersService {
-  constructor(@InjectRepository(User) private usersRepository: Repository<User>) {}
+  constructor(@InjectRepository(User) private readonly usersRepository: Repository<User>) {}
 
-  @Post()
   async create(userDto: CreateUserDto) {
-    const newUser = await this.usersRepository.create(userDto);
+    const newUser = this.usersRepository.create(userDto);
     return await this.usersRepository.save(newUser);
   }
 
-  async findAll() {
+  async getAll() {
     return await this.usersRepository.find();
   }
 
@@ -41,7 +40,7 @@ export class UsersService {
       throw new HttpException(DEFAULT_ERROR, HttpStatus.NOT_FOUND);
     }
 
-    return this.usersRepository.remove([user]);
+    return await this.usersRepository.remove([user]);
   }
 
   async getByEmail(email: string) {

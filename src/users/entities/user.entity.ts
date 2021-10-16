@@ -1,6 +1,5 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 import { Exclude } from 'class-transformer';
-import { Video } from 'src/videos/entities/video.entity';
 
 @Entity('users')
 export class User {
@@ -16,7 +15,4 @@ export class User {
   @Column()
   @Exclude()
   password: string;
-
-  @OneToMany(() => Video, (video: Video) => video.author)
-  videos: Video[];
 }
