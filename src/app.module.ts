@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { UsersModule } from './users/users.module';
 import { AuthenticationModule } from './authentication/authentication.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from 'src/database/database.module';
 import { VideosModule } from './videos/videos.module';
-import { MulterModule } from '@nestjs/platform-express';
 import * as J from 'joi';
+import { MulterModule } from 'src/multer/multer.module';
 
 @Module({
   imports: [
@@ -23,14 +23,8 @@ import * as J from 'joi';
         PORT: J.number(),
       }),
     }),
-    MulterModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        dest: configService.get('SERVER_HOST'),
-      }),
-    }),
     DatabaseModule,
+    MulterModule,
     AuthenticationModule,
     UsersModule,
     VideosModule,

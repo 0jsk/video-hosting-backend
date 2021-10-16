@@ -1,26 +1,45 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { UpdateVideoDto } from './dto/update-video.dto';
+import { Video } from 'src/videos/entities/video.entity';
+import { NOT_FOUND } from 'src/shared/constants/video.strings';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class VideosService {
-  create(createVideoDto: CreateVideoDto) {
-    return 'This action adds a new video';
+  constructor(@InjectRepository(Video) private readonly videoRepository: Repository<Video>) {}
+
+  async create(createVideoDto: CreateVideoDto) {
+    const newVideo = this.videoRepository.create(createVideoDto);
+    return await this.videoRepository.save(newVideo);
   }
 
-  findAll() {
-    return `This action returns all videos`;
+  async getAll() {
+    return await this.videoRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} video`;
+  async getById(id: number) {
+    const video = this.videoRepository.findOne({ id });
+
+    if (!video) {
+      throw new HttpException(NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    return video;
   }
 
-  update(id: number, updateVideoDto: UpdateVideoDto) {
-    return `This action updates a #${id} video`;
+  async update(id: number, videoData: UpdateVideoDto) {
+    return await this.videoRepository.update({ id }, videoData);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} video`;
+  async remove(id: number) {
+    const video = await this.videoRepository.findOne({ id });
+
+    if (!video) {
+      throw new HttpException(NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    return await this.videoRepository.remove([video]);
   }
 }
