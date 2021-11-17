@@ -8,6 +8,9 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
+  Req,
+  Logger,
+  StreamableFile,
 } from '@nestjs/common';
 import { VideosService } from './videos.service';
 import { JwtAuthenticationGuard } from 'src/authentication/guards/jwt-authentication.guard';
@@ -15,6 +18,9 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { randomBytes } from 'crypto';
 import { extname } from 'path';
+import { NOT_FOUND } from 'src/shared/constants/video.strings';
+import { Request } from 'express';
+import * as path from 'path';
 
 @Controller('videos')
 export class VideosController {
@@ -49,5 +55,28 @@ export class VideosController {
   )
   async upload(@UploadedFile() file: Express.Multer.File) {
     return await this.videosService.create({ url: file.path });
+  }
+
+  @Get('download/:id')
+  async download(@Param('id') id: string, @Req() request: Request) {
+    const video = await this.videosService.getById(+id);
+
+    if (!video) {
+      throw new HttpException(NOT_FOUND, HttpStatus.NOT_FOUND);
+    }
+
+    const videoPath = path.resolve(video.url);
+    const videoBuffer = await this.videosService.getVideoBuffer(videoPath);
+    const videoStream = await this.videosService.getReadableStreamVideo(videoBuffer);
+
+    request.res.set({
+      'Content-Type': 'video/mp4',
+      'Content-Length': videoBuffer.length,
+      'Content-Disposition': 'inline', // TODO: inline
+    });
+
+    Logger.log({ path: videoPath });
+
+    return new StreamableFile(videoStream);
   }
 }

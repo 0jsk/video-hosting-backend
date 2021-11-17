@@ -5,6 +5,8 @@ import { Video } from 'src/videos/entities/video.entity';
 import { NOT_FOUND } from 'src/shared/constants/video.strings';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Readable } from 'stream';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class VideosService {
@@ -41,5 +43,18 @@ export class VideosService {
     }
 
     return await this.videoRepository.remove([video]);
+  }
+
+  async getVideoBuffer(videoPath: string): Promise<Buffer> {
+    return await fs.readFile(videoPath);
+  }
+
+  async getReadableStreamVideo(videoBuffer: Buffer): Promise<Readable> {
+    const stream = new Readable();
+
+    stream.push(videoBuffer);
+    stream.push(null);
+
+    return stream;
   }
 }
